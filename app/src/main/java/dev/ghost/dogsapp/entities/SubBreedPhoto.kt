@@ -1,16 +1,17 @@
 package dev.ghost.dogsapp.entities
 
-import android.os.Parcelable
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
+
+@Entity
 @Parcelize
-@Entity(tableName = "subBreeds")
-class SubBreed(
+data class SubBreedPhoto(
     @PrimaryKey
+    override val path: String = "",
     val subBreedName: String = "",
-    val breedName: String = ""
-) : Parcelable
+    override
+    var liked: Boolean = false
+) : ItemImage

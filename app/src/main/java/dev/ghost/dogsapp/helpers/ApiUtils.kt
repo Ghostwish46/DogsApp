@@ -1,6 +1,4 @@
 package dev.ghost.dogsapp.helpers
-import ApiService
-import dev.ghost.notforgotapp.helpers.RetrofitClient
 
 object ApiUtils {
 
