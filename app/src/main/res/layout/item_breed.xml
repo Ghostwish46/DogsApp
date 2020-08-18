@@ -7,7 +7,7 @@
 
         <variable
             name="breed"
-            type="dev.ghost.dogsapp.entities.Breed" />
+            type="dev.ghost.dogsapp.model.entities.Breed" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

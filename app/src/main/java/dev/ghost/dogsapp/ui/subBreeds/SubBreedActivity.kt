@@ -6,44 +6,44 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import dev.ghost.dogsapp.MainActivity
+import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
-import dev.ghost.dogsapp.entities.BreedWithSubBreeds
-import dev.ghost.dogsapp.entities.SubBreedWithPhotos
+import dev.ghost.dogsapp.model.entities.Breed
 import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.ui.breeds.ListFragment
+import dev.ghost.dogsapp.viewmodel.breeds.BreedsAdapter
+import dev.ghost.dogsapp.viewmodel.breeds.BreedsViewModel
 import kotlinx.android.synthetic.main.activity_sub_breed.*
 
-class SubBreedActivity : AppCompatActivity(), SubBreedsAdapter.OnItemClickListener {
+class SubBreedActivity : AppCompatActivity() {
 
-    private lateinit var subBreedViewModel: SubBreedViewModel
+    private lateinit var subBreedViewModel: BreedsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sub_breed)
 
-        subBreedViewModel = ViewModelProvider(this).get(SubBreedViewModel::class.java)
+        subBreedViewModel = ViewModelProvider(this).get(BreedsViewModel::class.java)
 
-        val breedWithSubBreeds = intent.extras?.get(ListFragment.BREED) as? BreedWithSubBreeds
+        val currentItem = intent.extras?.get(ListFragment.BREED)
+        if (currentItem is Breed)
+            subBreedViewModel.parentBreed = currentItem
+        subBreedViewModel.updateData()
 
-        subBreedViewModel.subBreedAdapter = SubBreedsAdapter(this)
+        subBreedViewModel.breedAdapter =
+            BreedsAdapter {
+                val intentImages = Intent(this@SubBreedActivity, ImagesActivity::class.java)
+                intentImages.putExtra(MainActivity.EXTRA_ITEM, it)
+                startActivity(intentImages)
+            }
 
         recyclerViewSubBreeds.apply {
             layoutManager = LinearLayoutManager(this@SubBreedActivity)
-            adapter = subBreedViewModel.subBreedAdapter
+            adapter = subBreedViewModel.breedAdapter
         }
 
-        subBreedViewModel
-            .getSubBreeds(breedWithSubBreeds?.breed?.name ?: "")
-
-        subBreedViewModel.subBreedsWithPhoto.observe(this, Observer {
-            subBreedViewModel.subBreedAdapter.updateSubBreeds(it)
+        subBreedViewModel.breedsFullInfoData.observe(this, Observer {
+            subBreedViewModel.breedAdapter.updateBreeds(it)
         })
-    }
-
-    override fun onClick(fullSubBreed: SubBreedWithPhotos) {
-        val intentImages = Intent(this@SubBreedActivity, ImagesActivity::class.java)
-        intentImages.putExtra(MainActivity.EXTRA_ITEM, fullSubBreed.subBreed)
-        startActivity(intentImages)
     }
 }

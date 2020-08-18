@@ -5,8 +5,8 @@
 
     <data>
 <variable
-    name="itemImage"
-    type="dev.ghost.dogsapp.entities.ItemImage" />
+    name="breedPhoto"
+    type="dev.ghost.dogsapp.model.entities.BreedPhoto" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,7 @@
             android:id="@+id/imageViewItemImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:imageUrl="@{itemImage.path}"
+            app:imageUrl="@{breedPhoto.path}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -34,7 +34,7 @@
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:src="@{itemImage.liked? @drawable/ic_favorite : @drawable/ic_favorite_border}"
+            android:src="@{breedPhoto.liked? @drawable/ic_favorite : @drawable/ic_favorite_border}"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

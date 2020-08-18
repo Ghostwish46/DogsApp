@@ -8,31 +8,56 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import dev.ghost.dogsapp.MainActivity
+import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
-import dev.ghost.dogsapp.entities.BreedWithSubBreeds
 import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.ui.subBreeds.SubBreedActivity
+import dev.ghost.dogsapp.viewmodel.breeds.BreedsAdapter
+import dev.ghost.dogsapp.viewmodel.breeds.BreedsViewModel
 import kotlinx.android.synthetic.main.fragment_list.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ListFragment : Fragment(), BreedsAdapter.OnItemClickListener {
+class ListFragment : Fragment() {
 
-    companion object{
+    companion object {
         const val BREED = "Breed"
     }
 
-    private lateinit var listViewModel: ListViewModel
+    private lateinit var listViewModel: BreedsViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         listViewModel =
-            ViewModelProvider(this).get(ListViewModel::class.java)
+            ViewModelProvider(this).get(BreedsViewModel::class.java)
+        listViewModel.updateData()
+
         listViewModel.breedAdapter =
-            BreedsAdapter(this)
+            BreedsAdapter()
+            {
+
+                listViewModel.viewModelScope.launch(Dispatchers.IO) {
+                    val subBreedsCount = listViewModel.getSubBreedsCount(it.breed)
+                    withContext(Dispatchers.Main)
+                    {
+                        if (subBreedsCount > 0) {
+                            val intentSubBreed = Intent(context, SubBreedActivity::class.java)
+                            intentSubBreed.putExtra(BREED, it.breed)
+                            context?.startActivity(intentSubBreed)
+                        } else {
+                            val intentImages = Intent(context, ImagesActivity::class.java)
+                            intentImages.putExtra(MainActivity.EXTRA_ITEM, it)
+                            context?.startActivity(intentImages)
+                        }
+                    }
+                }
+            }
 
         val root = inflater.inflate(R.layout.fragment_list, container, false)
 
@@ -46,20 +71,5 @@ class ListFragment : Fragment(), BreedsAdapter.OnItemClickListener {
         })
 
         return root
-    }
-
-    override fun onClick(fullBreed: BreedWithSubBreeds) {
-        if (fullBreed.subBreeds.isEmpty())
-        {
-            val intentImages = Intent(context, ImagesActivity::class.java)
-            intentImages.putExtra(MainActivity.EXTRA_ITEM, fullBreed.breed)
-            context?.startActivity(intentImages)
-        }
-        else
-        {
-            val intentSubBreed = Intent(context, SubBreedActivity::class.java)
-            intentSubBreed.putExtra(BREED, fullBreed)
-            context?.startActivity(intentSubBreed)
-        }
     }
 }
