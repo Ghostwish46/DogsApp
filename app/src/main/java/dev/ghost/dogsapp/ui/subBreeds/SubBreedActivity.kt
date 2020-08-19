@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
 import dev.ghost.dogsapp.model.entities.Breed
+import dev.ghost.dogsapp.model.network.Status
+import dev.ghost.dogsapp.ui.AlertDialogHelper
 import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.ui.breeds.ListFragment
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsAdapter
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsViewModel
 import kotlinx.android.synthetic.main.activity_sub_breed.*
+import kotlinx.android.synthetic.main.fragment_favourites.*
+import kotlinx.android.synthetic.main.fragment_list.view.*
 
 class SubBreedActivity : AppCompatActivity() {
 
@@ -46,7 +50,22 @@ class SubBreedActivity : AppCompatActivity() {
             }
 
             subBreedViewModel.breedsFullInfoData.observe(this, Observer {
-                subBreedViewModel.breedAdapter.updateBreeds(it)
+                progressBarSubBreeds.visibility = if (it.isNotEmpty()) {
+                    subBreedViewModel.breedAdapter.updateBreeds(it)
+                    View.GONE
+                } else
+                    View.VISIBLE
+            })
+
+            subBreedViewModel.loadingState.observe(this, Observer {
+                when (it.status) {
+                    Status.FAILED -> {
+                        AlertDialogHelper().showConnectionErrorDialog(this)
+                        progressBarSubBreeds.visibility = View.GONE
+                    }
+                    else -> {
+                    }
+                }
             })
         }
     }

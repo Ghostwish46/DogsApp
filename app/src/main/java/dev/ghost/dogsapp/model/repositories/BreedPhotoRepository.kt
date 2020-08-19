@@ -21,31 +21,30 @@ class BreedPhotoRepository(
     suspend fun refresh() {
         withContext(Dispatchers.IO)
         {
-            try {
-                val breedPhotos = if (breed.parentName.isEmpty()) {
-                    apiService.getBreedPhotosAsync(breed.name.toLowerCase())
-                        .await()
-                } else {
-                    apiService.getSubBreedPhotosAsync(breed.parentName.toLowerCase(), breed.name.toLowerCase())
-                        .await()
-                }
+            val breedPhotos = if (breed.parentName.isEmpty()) {
+                apiService.getBreedPhotosAsync(breed.name.toLowerCase())
+                    .await()
+            } else {
+                apiService.getSubBreedPhotosAsync(
+                    breed.parentName.toLowerCase(),
+                    breed.name.toLowerCase()
+                )
+                    .await()
+            }
 
-                val response =
-                    breedPhotos.toString().substringAfter("[")
-                        .substringBefore("]")
-                        .replace(" ", "")
-                val pathItems = response.split(",")
+            val response =
+                breedPhotos.toString().substringAfter("[")
+                    .substringBefore("]")
+                    .replace(" ", "")
+            val pathItems = response.split(",")
 
-                pathItems.forEach {
-                    val tempBreedPhoto =
-                        BreedPhoto(
-                            it,
-                            breed.name
-                        )
-                    breedPhotoDao.add(tempBreedPhoto)
-                }
-            } catch (ex: Exception) {
-                Log.e("ERROR", ex.message.toString())
+            pathItems.forEach {
+                val tempBreedPhoto =
+                    BreedPhoto(
+                        it,
+                        breed.name
+                    )
+                breedPhotoDao.add(tempBreedPhoto)
             }
         }
     }

@@ -31,29 +31,25 @@ class BreedRepository(
     suspend fun refresh() {
         withContext(Dispatchers.IO)
         {
-            try {
-                val breedWithSubBreedsResponse = apiService.getBreedsAsync()
-                    .await()
+            val breedWithSubBreedsResponse = apiService.getBreedsAsync()
+                .await()
 
-                val tempObject = JSONObject(breedWithSubBreedsResponse.toString())
-                val tempMessage = tempObject.getJSONObject("message")
-                tempMessage.keys().forEach {
-                    val tempBreed =
-                        Breed(it.capitalize(), "")
-                    breedDao.add(tempBreed)
+            val tempObject = JSONObject(breedWithSubBreedsResponse.toString())
+            val tempMessage = tempObject.getJSONObject("message")
+            tempMessage.keys().forEach {
+                val tempBreed =
+                    Breed(it.capitalize(), "")
+                breedDao.add(tempBreed)
 
-                    val jsonSubBreeds = tempMessage.getJSONArray(it)
-                    Array(jsonSubBreeds.length()) { subKey ->
-                        val tempSubBreed =
-                            Breed(
-                                jsonSubBreeds.getString(subKey).capitalize(), tempBreed.name.capitalize()
-                            )
-                        breedDao.add(tempSubBreed)
-                    }
+                val jsonSubBreeds = tempMessage.getJSONArray(it)
+                Array(jsonSubBreeds.length()) { subKey ->
+                    val tempSubBreed =
+                        Breed(
+                            jsonSubBreeds.getString(subKey).capitalize(),
+                            tempBreed.name.capitalize()
+                        )
+                    breedDao.add(tempSubBreed)
                 }
-
-            } catch (ex: Exception) {
-                Log.e("ERROR", ex.message.toString())
             }
         }
     }

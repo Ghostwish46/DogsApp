@@ -1,10 +1,14 @@
 package dev.ghost.dogsapp.ui.breeds
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -12,11 +16,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
+import dev.ghost.dogsapp.model.network.LoadingState
+import dev.ghost.dogsapp.model.network.Status
+import dev.ghost.dogsapp.ui.AlertDialogHelper
 import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.ui.subBreeds.SubBreedActivity
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsAdapter
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.alert_server_error.view.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +78,24 @@ class ListFragment : Fragment() {
         }
 
         listViewModel.breedsFullInfoData.observe(viewLifecycleOwner, Observer {
-            listViewModel.breedAdapter.updateBreeds(it)
+            root.progressBarList.visibility = if (it.isNotEmpty()) {
+                listViewModel.breedAdapter.updateBreeds(it)
+                View.GONE
+            } else
+                View.VISIBLE
+        })
+
+        listViewModel.loadingState.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.FAILED -> {
+                    context?.let {
+                        AlertDialogHelper().showConnectionErrorDialog(it)
+                    }
+                    root.progressBarList.visibility = View.GONE
+                }
+                else -> {
+                }
+            }
         })
 
         return root

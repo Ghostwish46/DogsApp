@@ -13,8 +13,6 @@ import kotlinx.coroutines.launch
 
 class BreedsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _loadingState = MutableLiveData<LoadingState>()
-
     private val appDatabase = AppDatabase.getDatabase(application)
     private val apiService = ApiUtils.apiService
 
@@ -28,7 +26,7 @@ class BreedsViewModel(application: Application) : AndroidViewModel(application) 
     var parentBreed: Breed? = null
 
     lateinit var breedsFullInfoData: LiveData<List<BreedWithPhotos>>
-
+    val loadingState = MutableLiveData<LoadingState>()
 
     fun updateData() {
 
@@ -41,17 +39,15 @@ class BreedsViewModel(application: Application) : AndroidViewModel(application) 
     suspend fun getSubBreedsCount(breed: Breed) =
         breedRepository.getSubBreedsCount(breed)
 
-    val loadingState: LiveData<LoadingState>
-        get() = _loadingState
 
     private fun fetchItems() {
         viewModelScope.launch {
             try {
-                _loadingState.value = LoadingState.LOADING
+                loadingState.value = LoadingState.LOADING
                 breedRepository.refresh()
-                _loadingState.value = LoadingState.LOADED
+                loadingState.value = LoadingState.LOADED
             } catch (e: Exception) {
-                _loadingState.value = LoadingState.error(e.message)
+                loadingState.value = LoadingState.error(e.message)
             }
         }
     }

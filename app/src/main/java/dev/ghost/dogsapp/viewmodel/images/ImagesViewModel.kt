@@ -12,10 +12,6 @@ import kotlinx.coroutines.launch
 
 class ImagesViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _loadingState = MutableLiveData<LoadingState>()
-    val loadingState: LiveData<LoadingState>
-        get() = _loadingState
-
     lateinit var breedImagesData: LiveData<List<BreedPhoto>>
     lateinit var breed: Breed
     lateinit var imagesAdapter: ImagesAdapter
@@ -23,6 +19,8 @@ class ImagesViewModel(application: Application) : AndroidViewModel(application) 
     private val appDatabase = AppDatabase.getDatabase(application)
     private val apiService = ApiUtils.apiService
     private lateinit var breedPhotoRepository: BreedPhotoRepository
+
+    val loadingState = MutableLiveData<LoadingState>()
 
     fun initializeData() {
         breedPhotoRepository =
@@ -37,11 +35,11 @@ class ImagesViewModel(application: Application) : AndroidViewModel(application) 
     private fun fetchBreedPhotos() {
         viewModelScope.launch {
             try {
-                _loadingState.value = LoadingState.LOADING
+                loadingState.value = LoadingState.LOADING
                 breedPhotoRepository.refresh()
-                _loadingState.value = LoadingState.LOADED
+                loadingState.value = LoadingState.LOADED
             } catch (e: Exception) {
-                _loadingState.value = LoadingState.error(e.message)
+                loadingState.value = LoadingState.error(e.message)
             }
         }
     }

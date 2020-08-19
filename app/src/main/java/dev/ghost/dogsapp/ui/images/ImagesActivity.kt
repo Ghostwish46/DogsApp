@@ -1,5 +1,6 @@
 package dev.ghost.dogsapp.ui.images
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
 import dev.ghost.dogsapp.model.domain.BreedWithPhotos
+import dev.ghost.dogsapp.model.network.Status
+import dev.ghost.dogsapp.ui.AlertDialogHelper
 import dev.ghost.dogsapp.viewmodel.images.ImagesAdapter
 import dev.ghost.dogsapp.viewmodel.images.ImagesViewModel
 import kotlinx.android.synthetic.main.activity_images.*
@@ -58,8 +61,18 @@ class ImagesActivity : AppCompatActivity() {
                 imagesViewModel.initializeData()
                 imagesViewModel.breedImagesData.observe(this@ImagesActivity,
                     Observer {
-                        imagesViewModel.imagesAdapter.updateImages(it)
+                        progressBarImages.visibility = if (it.isNotEmpty()) {
+                            imagesViewModel.imagesAdapter.updateImages(it)
+                            View.GONE
+                        } else
+                            View.VISIBLE
                     })
+                imagesViewModel.loadingState.observe(this, Observer {
+                    if (it.status == Status.FAILED) {
+                        progressBarImages.visibility = View.GONE
+                        AlertDialogHelper().showConnectionErrorDialog(this)
+                    }
+                })
             }
         }
 
