@@ -13,8 +13,9 @@ class AlertDialogHelper {
     fun showConnectionErrorDialog(context: Context) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.alert_server_error, null)
 
-        val errorDialog = AlertDialog.Builder(context, R.style.MyThemeOverlayAlertDialog).setView(dialogView)
-            .show()
+        val errorDialog =
+            AlertDialog.Builder(context, R.style.MyThemeOverlayAlertDialog).setView(dialogView)
+                .show()
         errorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
 
         dialogView.textViewAlertErrorOk.setOnClickListener {

@@ -20,7 +20,7 @@ interface BreedDao {
 
     @Query("Select * FROM breeds INNER JOIN breedphoto ON breeds.name = breedphoto.breedName WHERE (breedphoto.liked = 1)")
     @Transaction
-    fun getFavouriteBreeds():LiveData<List<BreedWithPhotos>>
+    fun getFavouriteBreeds(): LiveData<List<BreedWithPhotos>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun add(breeds: List<Breed>)

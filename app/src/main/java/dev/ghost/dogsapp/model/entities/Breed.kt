@@ -11,7 +11,7 @@ import kotlinx.android.parcel.Parcelize
 data class Breed(
     @PrimaryKey
     val name: String = "",
-    val parentName:String = ""
+    val parentName: String = ""
 ) : Parcelable {
 
 }

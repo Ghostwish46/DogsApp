@@ -52,7 +52,6 @@ class ListFragment : Fragment() {
         listViewModel.breedAdapter =
             BreedsAdapter()
             {
-
                 listViewModel.viewModelScope.launch(Dispatchers.IO) {
                     val subBreedsCount = listViewModel.getSubBreedsCount(it.breed)
                     withContext(Dispatchers.Main)
