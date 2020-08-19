@@ -86,15 +86,11 @@ class ListFragment : Fragment() {
         })
 
         listViewModel.loadingState.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Status.FAILED -> {
-                    context?.let {
-                        AlertDialogHelper().showConnectionErrorDialog(it)
-                    }
-                    root.progressBarList.visibility = View.GONE
+            if (it.status == Status.FAILED) {
+                context?.let {
+                    AlertDialogHelper().showConnectionErrorDialog(it)
                 }
-                else -> {
-                }
+                root.progressBarList.visibility = View.GONE
             }
         })
 
