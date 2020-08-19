@@ -15,8 +15,8 @@ fun loadImage(imageView: ImageView, url: String) {
     if (url != "") {
         Picasso.get()
             .load(url)
-            .placeholder(R.drawable.ic_launcher_background)
-            .error(R.drawable.ic_launcher_background)
+            .placeholder(R.drawable.dog_placeholder)
+            .error(R.drawable.dog_error)
             .into(imageView, object : Callback {
                 override fun onSuccess() {
                 }

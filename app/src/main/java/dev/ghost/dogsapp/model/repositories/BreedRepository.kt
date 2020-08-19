@@ -39,14 +39,14 @@ class BreedRepository(
                 val tempMessage = tempObject.getJSONObject("message")
                 tempMessage.keys().forEach {
                     val tempBreed =
-                        Breed(it, "")
+                        Breed(it.capitalize(), "")
                     breedDao.add(tempBreed)
 
                     val jsonSubBreeds = tempMessage.getJSONArray(it)
                     Array(jsonSubBreeds.length()) { subKey ->
                         val tempSubBreed =
                             Breed(
-                                jsonSubBreeds.getString(subKey), tempBreed.name
+                                jsonSubBreeds.getString(subKey).capitalize(), tempBreed.name.capitalize()
                             )
                         breedDao.add(tempSubBreed)
                     }

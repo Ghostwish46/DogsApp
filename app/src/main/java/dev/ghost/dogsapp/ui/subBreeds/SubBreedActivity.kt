@@ -3,6 +3,7 @@ package dev.ghost.dogsapp.ui.subBreeds
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,28 +23,35 @@ class SubBreedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sub_breed)
+        setSupportActionBar(toolbarSubBreeds)
 
         subBreedViewModel = ViewModelProvider(this).get(BreedsViewModel::class.java)
 
         val currentItem = intent.extras?.get(ListFragment.BREED)
-        if (currentItem is Breed)
+        if (currentItem is Breed) {
+            titleSubBreed.text = currentItem.name
             subBreedViewModel.parentBreed = currentItem
-        subBreedViewModel.updateData()
+            subBreedViewModel.updateData()
 
-        subBreedViewModel.breedAdapter =
-            BreedsAdapter {
-                val intentImages = Intent(this@SubBreedActivity, ImagesActivity::class.java)
-                intentImages.putExtra(MainActivity.EXTRA_ITEM, it)
-                startActivity(intentImages)
+            subBreedViewModel.breedAdapter =
+                BreedsAdapter {
+                    val intentImages = Intent(this@SubBreedActivity, ImagesActivity::class.java)
+                    intentImages.putExtra(MainActivity.EXTRA_ITEM, it)
+                    startActivity(intentImages)
+                }
+
+            recyclerViewSubBreeds.apply {
+                layoutManager = LinearLayoutManager(this@SubBreedActivity)
+                adapter = subBreedViewModel.breedAdapter
             }
 
-        recyclerViewSubBreeds.apply {
-            layoutManager = LinearLayoutManager(this@SubBreedActivity)
-            adapter = subBreedViewModel.breedAdapter
+            subBreedViewModel.breedsFullInfoData.observe(this, Observer {
+                subBreedViewModel.breedAdapter.updateBreeds(it)
+            })
         }
+    }
 
-        subBreedViewModel.breedsFullInfoData.observe(this, Observer {
-            subBreedViewModel.breedAdapter.updateBreeds(it)
-        })
+    fun goBack(view: View) {
+        onBackPressed()
     }
 }

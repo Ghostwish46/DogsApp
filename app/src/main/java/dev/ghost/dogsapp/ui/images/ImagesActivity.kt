@@ -1,16 +1,21 @@
 package dev.ghost.dogsapp.ui.images
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dev.ghost.dogsapp.ui.MainActivity
 import dev.ghost.dogsapp.R
 import dev.ghost.dogsapp.model.domain.BreedWithPhotos
 import dev.ghost.dogsapp.viewmodel.images.ImagesAdapter
 import dev.ghost.dogsapp.viewmodel.images.ImagesViewModel
 import kotlinx.android.synthetic.main.activity_images.*
+import kotlinx.android.synthetic.main.layout_bottom_share.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -18,6 +23,7 @@ class ImagesActivity : AppCompatActivity() {
 
     private lateinit var imagesViewModel: ImagesViewModel
 
+    private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +35,8 @@ class ImagesActivity : AppCompatActivity() {
             intent.extras?.getBoolean(MainActivity.FLAG_FAVOURITE, false) ?: false
 
         if (currentItem is BreedWithPhotos) {
+            titleSubBreed.text = currentItem.breed.name
+
             imagesViewModel = ViewModelProvider(this@ImagesActivity)
                 .get(ImagesViewModel::class.java)
 
@@ -54,5 +62,23 @@ class ImagesActivity : AppCompatActivity() {
                     })
             }
         }
+
+        bottomBehavior = BottomSheetBehavior.from(bottom_sheet_share)
+
+        textViewBottomActionShare.setOnClickListener {
+            Toast.makeText(this, getString(R.string.message_photo_sent), Toast.LENGTH_LONG).show()
+            bottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        textViewBottomActionCancel.setOnClickListener {
+            bottomBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+    fun goBack(view: View) {
+        onBackPressed()
+    }
+
+    fun shareImage(view: View) {
+        bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 }

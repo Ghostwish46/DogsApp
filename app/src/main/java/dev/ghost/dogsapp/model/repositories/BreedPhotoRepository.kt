@@ -23,10 +23,10 @@ class BreedPhotoRepository(
         {
             try {
                 val breedPhotos = if (breed.parentName.isEmpty()) {
-                    apiService.getBreedPhotosAsync(breed.name)
+                    apiService.getBreedPhotosAsync(breed.name.toLowerCase())
                         .await()
                 } else {
-                    apiService.getSubBreedPhotosAsync(breed.parentName, breed.name)
+                    apiService.getSubBreedPhotosAsync(breed.parentName.toLowerCase(), breed.name.toLowerCase())
                         .await()
                 }
 

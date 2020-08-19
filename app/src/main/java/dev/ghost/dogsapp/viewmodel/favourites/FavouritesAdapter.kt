@@ -19,7 +19,7 @@ class FavouritesAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(favouriteBreed: BreedWithPhotos) {
-            binding.favouriteBreed = favouriteBreed.breed
+            binding.favouriteBreed = favouriteBreed
             binding.executePendingBindings()
             binding.root.setOnClickListener {
                 onFavouriteClickListener(favouriteBreed)

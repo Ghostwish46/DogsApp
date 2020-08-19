@@ -16,6 +16,7 @@ import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.ui.subBreeds.SubBreedActivity
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsAdapter
 import dev.ghost.dogsapp.viewmodel.breeds.BreedsViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +35,8 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as MainActivity).titleMain.text = getString(R.string.title_list)
+
         listViewModel =
             ViewModelProvider(this).get(BreedsViewModel::class.java)
         listViewModel.updateData()

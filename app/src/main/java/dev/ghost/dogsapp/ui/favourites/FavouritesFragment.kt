@@ -14,6 +14,7 @@ import dev.ghost.dogsapp.R
 import dev.ghost.dogsapp.ui.images.ImagesActivity
 import dev.ghost.dogsapp.viewmodel.favourites.FavouritesAdapter
 import dev.ghost.dogsapp.viewmodel.favourites.FavouritesViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_favourites.view.*
 
 class FavouritesFragment : Fragment() {
@@ -25,6 +26,8 @@ class FavouritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as MainActivity).titleMain.text = getString(R.string.title_favourites)
+
         favouriteViewModel =
             ViewModelProvider(this).get(FavouritesViewModel::class.java)
 
